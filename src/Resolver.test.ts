@@ -76,14 +76,14 @@ const initializeData = (): TestData[] => {
 describe('Resolver', () => {
   const data: TestData[] = initializeData();
 
-  describe.skip('sum', () => {
+  describe('sum', () => {
     for (let item of data) {
       if (item.input && item.expectedSum)
         testSum(item.input!, item.expectedSum!);
     }
   })
 
-  describe.skip('equal', () => {
+  describe('equal', () => {
 
   })
 

@@ -4,7 +4,7 @@ import { ResultData } from "../entities/Result";
 const occurrence = (dices: DiceType[], type: DiceType): number => {
   let occ = 0;
   for (let dice of dices) {
-    if (dice.type === type)
+    if (dice === type)
       occ++;
   }
   return occ;
@@ -35,7 +35,7 @@ const sum = (dices: DiceType[]): number => {
   sum += applyHeroTraitorBonus(dices);
   sum += applyMageBonus(dices);
   for (let dice of dices) {
-    sum += DiceTypeValue(dice.type);
+    sum += DiceTypeValue(dice);
   }
   return sum;
 }
@@ -64,42 +64,50 @@ const printState = (groupA: DiceType[], groupB: DiceType[], remaining?: DiceType
 }
 
 const compare = (groupA: DiceType[], groupB: DiceType[]): boolean => {
-  return sum(groupA) === sum(groupB);
+  return (sum(groupA) === sum(groupB));
 }
 
-const isValidHelper = (dices: DiceType[], groupA: DiceType[], groupB: DiceType[]): ResultData[] => {
+const isValidHelper = (dices: DiceType[], groupA: DiceType[], groupB: DiceType[], iterator: { value: number }, max: number): ResultData[] => {
   let res: ResultData[] = Array.from([])
+  iterator.value++;
+  if (iterator.value > max)
+    return res;
   for (let dice of dices) {
     let remaining = Array.from(dices);
     remaining.splice(remaining.indexOf(dice), 1);
-    let copyA = Array.from(groupA);
-    let copyB = Array.from(groupB)
-    copyA.push(dice);
-    const aResult = isValidHelper(remaining, copyA, copyB)
-    res.concat(aResult)
 
-    remaining = Array.from(dices);
-    remaining.splice(remaining.indexOf(dice), 1);
-    copyA = Array.from(groupA);
-    copyB = Array.from(groupB)
+    let copyA = Array.from(groupA);
+    copyA.push(dice);
+    const aResult = isValidHelper(remaining, copyA, groupB, iterator, max)
+    res = res.concat(aResult)
+
+    let copyB = Array.from(groupB)
     copyB.push(dice);
-    const bResult = isValidHelper(remaining, copyA, copyB)
-    res.concat(bResult)
+    const bResult = isValidHelper(remaining, groupA, copyB, iterator, max)
+    res = res.concat(bResult)
   }
 
-  if (dices.length === 0) {
-    if (compare(groupA, groupB)) {
-      res.push({
-        groupA: [...groupA],
-        groupB: [...groupB]
-      });
-    }
+  if (dices.length === 0 && compare(groupA, groupB)) {
+    res.push({
+      groupA: Array.from(groupA),
+      groupB: Array.from(groupB)
+    });
   }
   return res;
 }
 
+const dirtyFact = (n: number) => {
+  let res = 1;
+  while (n > 0)
+    res *= n--;
+  return res;
+}
+
 const isValid = (dices: DiceType[]): ResultData[] => {
-  return isValidHelper(dices, [], []);
+  const iterator = {
+    value: 0
+  }
+  return isValidHelper(dices, [], [], iterator, dirtyFact(dices.length + 1));
 }
 
 export const Resolver = {
