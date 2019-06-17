@@ -24,7 +24,7 @@ export const DiceTypeValue = (type: DiceType) => {
   }
 }
 
-export const printDice = (dice: DiceType): string => {
+/*export const printDice = (dice: DiceType): string => {
   switch(dice) {
     case DiceType.Hero: {
       return "HERO"
@@ -45,4 +45,4 @@ export const printDice = (dice: DiceType): string => {
       return "MAGE"
     }
   }
-}
+}*/

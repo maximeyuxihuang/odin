@@ -1,4 +1,4 @@
-import { DiceType, DiceTypeValue, printDice } from "../entities/Dice";
+import { DiceType, DiceTypeValue } from "../entities/Dice";
 import { ResultData } from "../entities/Result";
 
 const occurrence = (dices: DiceType[], type: DiceType): number => {
@@ -38,29 +38,6 @@ const sum = (dices: DiceType[]): number => {
     sum += DiceTypeValue(dice);
   }
   return sum;
-}
-
-const printState = (groupA: DiceType[], groupB: DiceType[], remaining?: DiceType[]) => {
-  let aStr = ""
-  for (let a of groupA) {
-    aStr += printDice(a) + " "
-  }
-  aStr = `Group A: ${aStr}\n`;
-  let bStr = ""
-  for (let b of groupB) {
-    bStr += printDice(b) + " "
-  }
-  bStr = `Group B: ${bStr}\n`;
-
-  let rStr = ""
-  if (remaining !== undefined) {
-
-    for (let r of remaining) {
-      rStr += printDice(r) + " "
-    }
-    rStr = `Remaining: ${rStr}\n`
-  }
-  console.log(`${aStr}${bStr}${rStr}====`)
 }
 
 const compare = (groupA: DiceType[], groupB: DiceType[]): boolean => {
@@ -112,5 +89,6 @@ const isValid = (dices: DiceType[]): ResultData[] => {
 
 export const Resolver = {
   sum,
-  isValid
+  isValid,
+  compare
 }

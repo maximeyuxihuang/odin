@@ -1,6 +1,6 @@
-import { Resolver } from './resolver/Resolver'
-import { DiceType } from './entities/Dice'
-import { TestData } from './entities/TestData';
+import { Resolver } from './main/resolver/Resolver'
+import { DiceType } from './main/entities/Dice'
+import { TestData } from './main/entities/TestData';
 import fs from 'fs'
 
 const addDice = (tab: DiceType[], input: DiceType, it: number) => {
@@ -47,15 +47,26 @@ const generator = (input: string): DiceType[] => {
 }
 
 const testSum = (input: string, expected: number) => {
-  it(input, () => {
+  it(`${input} === ${expected}`, () => {
     expect(Resolver.sum(generator(input))).toBe(expected)
   })
 }
 
 const testIsValid = (input: string, expected: boolean) => {
-  it(input, () => {
-    const res = Resolver.isValid(generator(input))
-    expect(res.length).toBeGreaterThanOrEqual(1);
+  it(`${input} has solution`, () => {
+    expect(Resolver.isValid(generator(input)).length).toBeGreaterThanOrEqual(1);
+  })
+}
+
+const testIsEqual = (input: string, compareTo: string) => {
+  it(`${input} === ${compareTo}`, () => {
+    expect(Resolver.compare(generator(input), generator(compareTo))).toBe(true);
+  })
+}
+
+const testIsNotEqual = (input: string, compareTo: string) => {
+  it(`${input} === ${compareTo}`, () => {
+    expect(Resolver.compare(generator(input), generator(compareTo))).toBe(false);
   })
 }
 
@@ -67,7 +78,9 @@ const initializeData = (): TestData[] => {
     data.push({
       input: dataArray[0],
       expectedSum: parseInt(dataArray[1]),
-      expectedExistSolution: dataArray[2] === "true" ? true : dataArray[2] === "false" ? false : undefined
+      expectedExistSolution: dataArray[2] === "true" ? true : dataArray[2] === "false" ? false : undefined,
+      isEqualDataToCompare: dataArray[3],
+      isNotEqualDataToCompare: dataArray[4]
     })
   }
   return data
@@ -84,7 +97,14 @@ describe('Resolver', () => {
   })
 
   describe('equal', () => {
-
+    for (let item of data) {
+      if (item.input) {
+        if (item.isEqualDataToCompare)
+          testIsEqual(item.input, item.isEqualDataToCompare);
+        else if (item.isNotEqualDataToCompare)
+          testIsNotEqual(item.input, item.isNotEqualDataToCompare);
+      }
+    }
   })
 
   describe('isValid', () => {
