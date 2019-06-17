@@ -1,5 +1,5 @@
 import { DiceType, DiceTypeValue } from "../entities/Dice";
-import { ResultData } from "../entities/Result";
+import { ResultData } from "../../tests/Result";
 
 const occurrence = (dices: DiceType[], type: DiceType): number => {
   let occ = 0;

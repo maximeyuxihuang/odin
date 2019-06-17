@@ -1,6 +1,6 @@
 import { Resolver } from './main/resolver/Resolver'
 import { DiceType } from './main/entities/Dice'
-import { TestData } from './main/entities/TestData';
+import { TestData } from './tests/TestData';
 import fs from 'fs'
 
 const addDice = (tab: DiceType[], input: DiceType, it: number) => {
