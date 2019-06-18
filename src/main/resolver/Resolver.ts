@@ -44,6 +44,42 @@ const compare = (groupA: DiceType[], groupB: DiceType[]): boolean => {
   return (sum(groupA) === sum(groupB));
 }
 
+const singleDeepCompare = (group: DiceType[], compareTo: DiceType[]): boolean => {
+  if (group.length !== compareTo.length)
+    return false;
+  const left = group.sort((a, b) => {
+    return b - a
+  })
+  const right = compareTo.sort((a, b) => {
+    return b - a
+  })
+  for (let i = 0; i < left.length; i++) {
+    if (left[i] !== right[i])
+      return false
+  }
+  return true;
+}
+
+const pairDeepCompare = (solution: ResultData, groupA: DiceType[], groupB: DiceType[]): boolean => {
+  return singleDeepCompare(solution.groupA, groupA) && singleDeepCompare(solution.groupB, groupB)
+    || singleDeepCompare(solution.groupA, groupB) && singleDeepCompare(solution.groupB, groupA)
+}
+
+const isAlreadyASolution = (array: ResultData[], groupA: DiceType[], groupB: DiceType[]): boolean => {
+  for (let solution of array) {
+    if (pairDeepCompare(solution, groupA, groupB))
+      return true;
+  }
+  return false;
+}
+
+const concatSolutions = (res: ResultData[], toConcat: ResultData[]) => {
+  for (let single of toConcat) {
+    if (!isAlreadyASolution(res, single.groupA, single.groupB))
+      res.push(single)
+  }
+}
+
 const isValidHelper = (dices: DiceType[], groupA: DiceType[], groupB: DiceType[], iterator: { value: number }, max: number): ResultData[] => {
   let res: ResultData[] = Array.from([])
   iterator.value++;
@@ -56,15 +92,15 @@ const isValidHelper = (dices: DiceType[], groupA: DiceType[], groupB: DiceType[]
     let copyA = Array.from(groupA);
     copyA.push(dice);
     const aResult = isValidHelper(remaining, copyA, groupB, iterator, max)
-    res = res.concat(aResult)
+    concatSolutions(res, aResult)
 
     let copyB = Array.from(groupB)
     copyB.push(dice);
     const bResult = isValidHelper(remaining, groupA, copyB, iterator, max)
-    res = res.concat(bResult)
+    concatSolutions(res, bResult)
   }
 
-  if (dices.length === 0 && compare(groupA, groupB)) {
+  if (dices.length === 0 && compare(groupA, groupB) && !isAlreadyASolution(res, groupA, groupB)) {
     res.push({
       groupA: Array.from(groupA),
       groupB: Array.from(groupB)

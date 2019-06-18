@@ -1,7 +1,7 @@
 export interface TestData {
   input?: string,
   expectedSum?: number,
-  expectedExistSolution?: boolean,
+  expectedNumberOfSolution?: number,
   isEqualDataToCompare?: string,
   isNotEqualDataToCompare?: string
 }
